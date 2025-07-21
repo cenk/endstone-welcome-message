@@ -21,12 +21,89 @@ A simple Endstone plugin that allows you to send players a welcome message via c
 #### 6 - Form message:
 <img width="455" height="407" alt="form" src="https://github.com/user-attachments/assets/6198471b-82b1-4888-8bda-13af17a5d458" />
 
+### Config file options
+#### ```type```
+Welcome message type.
+
+Valid values are between 0 and 6.
+| Value | Description |
+| --- | --- |
+| 0 | Disables welcome message |
+| 1 | Chat message |
+| 2 | Tip message |
+| 3 | Popup message |
+| 4 | Toast message |
+| 5 | Title message |
+| 6 | Form message |
+
+Example:
+```toml
+type = 1
+```
+
+#### ```header```
+Toast, Title or Form message header
+
+Effective only when type is 4 (Toast), 5 (Title) or 6 (Form).
+
+You can use ```§``` style Minecraft color codes and ```{}``` style placeholders like: ```{player_name}```, ```{player_ping}```
+
+Example:
+```toml
+header = "§u§lWelcome §s{player_name}"
+```
+
+#### ```body```
+Welcome message body
+
+You can use ```§``` style Minecraft color codes and ```{}``` style placeholders like: ```{player_name}```, ```{player_ping}```
+
+You can use newlines within the welcome message body.
+To do this, you can use ```\n``` within a single line or break lines using triple quotes.
+
+Note that the Toast message type does not support newlines.
+
+Example:
+```toml
+body = "§3Hello §6{player_name}§3. Welcome to our Minecraft Server."
+```
+
+Example with multiline 1:
+```toml
+body = "This is a\n multiline welcome message"
+```
+
+Example with multiline 2:
+```toml
+body = """This is a
+multiline welcome message"""
+```
+
+#### ```form_button_text```
+Form Button text
+
+Effective only when type is 6 (Form)
+
+Example:
+```toml
+form_button_text = "OK"
+```
+
+#### ```wait_before```
+Wait before the welcome message is displayed (in seconds).
+
+Valid values are between 0 and 5.
+
+0 disables waiting.
+```toml
+wait_before = 0 
+```
 
 ### Placeholders
 You can use the following placeholders in your welcome message. 
 | Placeholder | Description |
 | --- | --- |
-| {player_name} | Players's name |
+| {player_name} | Player's name |
 | {player_locale} | Player's current locale |
 | {player_device_os} | Player's operation system |
 | {player_device_id} | Player's current device id |
@@ -34,7 +111,7 @@ You can use the following placeholders in your welcome message.
 | {player_port} | Player's port number |
 | {player_game_mode} | Player's current game mode |
 | {player_game_version} | Player's current game version |
-| {player_exp_level} | Playerss current experience level |
+| {player_exp_level} | Player's current experience level |
 | {player_total_exp} | Player's total experience points |
 | {player_exp_progress} | Player's current experience progress towards the next level |
 | {player_ping} | Player's average ping |
