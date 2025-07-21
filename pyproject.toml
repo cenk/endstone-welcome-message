@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "endstone-welcome-message"
+version = "0.1.58"
+authors = [
+    { name = "cenk", email = "cenk@cenk.app" }
+]
+description = "A simple Endstone plugin that allows you to send players a welcome message via chat, tip, toast, title, popup or form when they join the server."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["minecraft", "endstone", "plugin", "welcome", "message", "chat", "tip", "toast", "title", "popup", "form"]
+
+[project.urls]
+Homepage = "https://github.com/cenk/endstone-welcome-message"
+
+[project.entry-points."endstone"]
+welcome-message = "endstone_welcome_message:WelcomeMessage"

@@ -1,0 +1,49 @@
+name: Release and Publish to PyPI
+
+on: 
+  push:
+    tags: 
+      - '*.*.*'
+
+jobs:
+  build:
+    name: Build distribution 📦
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+  
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install pypa/build
+      run: python3 -m pip install --upgrade build
+        
+    - name: Build a binary wheel
+      run: python3 -m build
+
+    # Does the git tag version match the whl file version? 
+    - name: match versions
+      id: versions_match
+      uses: andstor/file-existence-action@v3
+      with:
+        files: "dist/endstone_*${{ github.ref_name }}*.whl"
+
+    - name: GitHub Release
+      uses: softprops/action-gh-release@v2
+      if: steps.versions_match.outputs.files_exists == 'true'
+      with:
+        generate_release_notes: true
+        files: "dist/endstone_*${{ github.ref_name }}*.whl"
+
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      if: steps.versions_match.outputs.files_exists == 'true'

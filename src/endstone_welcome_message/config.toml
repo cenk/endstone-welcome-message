@@ -1,0 +1,42 @@
+[welcome_message]
+
+# Welcome message type
+# Valid values are between 0 and 6.
+# 0 = Disable Welcome Message
+# 1 = Chat
+# 2 = Tip
+# 3 = Popup
+# 4 = Toast
+# 5 = Title
+# 6 = Form
+type = 1
+
+# Toast, Title or Form message header
+# Effective only when type is 4 (Toast), 5 (Title) or 6 (Form).
+# You can use § style Minecraft color codes and {} style placeholders like: {player_name}, {player_ping}
+# You can find all available placeholders at:
+# https://github.com/cenk/endstone-welcome-message?tab=readme-ov-file#placeholders
+header = "§u§lWelcome §s{player_name}"
+
+# Welcome message body
+# You can use § style Minecraft color codes and {} style placeholders like: {player_name}, {player_ping}
+# You can find all available placeholders at:
+# https://github.com/cenk/endstone-welcome-message?tab=readme-ov-file#placeholders
+# You can use newlines within the welcome message body.
+# To do this, you can use "\n" within a single line or break lines using triple quotes.
+# Example 1: 
+# body = "This is a\n multiline welcome message"
+# Example 2:
+# body = """This is a
+# multiline welcome message"""
+# Note that the Toast message type does not support newlines.
+body = "§3This server is running §gEndstone {server_endstone_version} §3on §7Minecraft {server_minecraft_version}§3.§r\n§3Your average ping is §4{player_ping}§3."
+
+# Form Button text
+# Effective only when type is 6 (Form)
+form_button_text = "OK"
+
+# Wait before the welcome message is displayed. (in seconds)
+# Valid values are between 0 and 5.
+# 0 disables waiting.
+wait_before = 0
