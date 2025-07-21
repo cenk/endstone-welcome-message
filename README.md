@@ -4,16 +4,22 @@ A simple Endstone plugin that allows you to send players a welcome message via c
 
 ### Message types
 #### 1 - Chat message:
+<img width="570" height="152" alt="chat" src="https://github.com/user-attachments/assets/06e80480-0e4a-4cba-90f7-bab561ecf356" />
 
 #### 2 - Tip message:
+<img width="754" height="84" alt="tip" src="https://github.com/user-attachments/assets/7b8c4a09-625a-4cba-9fe7-7cc39e92cc70" />
 
 #### 3 - Popup message:
+<img width="382" height="131" alt="popup" src="https://github.com/user-attachments/assets/fb04c737-584a-4d4b-8c24-ee1da29edda9" />
 
 #### 4 - Toast message:
+<img width="841" height="123" alt="toast" src="https://github.com/user-attachments/assets/c6074f6f-6559-4e3f-adbf-ae52be206d10" />
 
 #### 5 - Title message:
+<img width="1595" height="550" alt="title" src="https://github.com/user-attachments/assets/ea257934-d1a7-4e3f-ad9c-38effb958700" />
 
 #### 6 - Form message:
+<img width="455" height="407" alt="form" src="https://github.com/user-attachments/assets/6198471b-82b1-4888-8bda-13af17a5d458" />
 
 
 ### Placeholders
