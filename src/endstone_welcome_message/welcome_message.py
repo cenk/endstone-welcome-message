@@ -22,29 +22,33 @@ class WelcomeMessage(Plugin):
     @event_handler
     def on_player_join(self, event: PlayerJoinEvent):
         if self.welcome_message_type > 0:
-            self.replace_placeholders(event.player)
-            if self.welcome_message_wait_before > 0:
-                time.sleep(self.welcome_message_wait_before)
-            match self.welcome_message_type:
-                case 1:
-                    event.player.send_message(self.welcome_message_body)
-                case 2:
-                    event.player.send_tip(self.welcome_message_body)
-                case 3:
-                    event.player.send_popup(self.welcome_message_body)
-                case 4:
-                    event.player.send_toast(self.welcome_message_header, self.welcome_message_body)
-                case 5:
-                    event.player.send_title(self.welcome_message_header, self.welcome_message_body)
-                case 6:
-                    welcome_form = ModalForm(
-                        title = self.welcome_message_header,
-                        controls = [Label(text=self.welcome_message_body + '\n\n')],
-                        submit_button = self.welcome_message_form_button_text
-                    )
-                    event.player.send_form(welcome_form)
+            self.show_message(event.player)
 
-    def replace_placeholders(self, player) -> None:
+    def show_message(self, player) -> None:
+        welcome_message_header, welcome_message_body = self.replace_placeholders(player)
+
+        if self.welcome_message_wait_before > 0:
+            time.sleep(self.welcome_message_wait_before)
+        match self.welcome_message_type:
+            case 1:
+                player.send_message(welcome_message_body)
+            case 2:
+                player.send_tip(welcome_message_body)
+            case 3:
+                player.send_popup(welcome_message_body)
+            case 4:
+                player.send_toast(welcome_message_header, welcome_message_body)
+            case 5:
+                player.send_title(welcome_message_header, welcome_message_body)
+            case 6:
+                welcome_form = ModalForm(
+                    title = welcome_message_header,
+                    controls = [Label(text=welcome_message_body + '\n\n')],
+                    submit_button = self.welcome_message_form_button_text
+                )
+                player.send_form(welcome_form)
+
+    def replace_placeholders(self, player) -> str:
         placeholder = {
             'player_name': player.name,
             'player_locale': player.locale,
@@ -58,7 +62,16 @@ class WelcomeMessage(Plugin):
             'player_total_exp': player.total_exp,
             'player_exp_progress': player.exp_progress,
             'player_ping': player.ping,
-            'server_level_name': self.server.level.name,
+            'player_dimension_name': player.location.dimension.type.name.replace("_"," ").title(),
+            'player_dimension_id': player.location.dimension.type.value,
+            'player_coordinate_x': int(player.location.x),
+            'player_coordinate_y': int(player.location.y),
+            'player_coordinate_z': int(player.location.z),
+            'player_xuid': player.xuid,
+            'player_uuid': player.unique_id,
+            'player_health': player.health,
+            'player_max_health': player.max_health,
+            'server_level_name': self.server.level.name.replace("_", " ").title(),
             'server_max_players': self.server.max_players,
             'server_online_players': len(self.server.online_players),
             'server_start_time': self.server.start_time,
@@ -67,8 +80,9 @@ class WelcomeMessage(Plugin):
             'server_minecraft_version': self.server.minecraft_version,
             'server_port': self.server.port,
             'server_port_v6': self.server.port_v6
-            # requires 'latest' api
-            #'server_protocol_version': self.server.protocol_version
         }
-        self.welcome_message_header = self.welcome_message_header.format(**placeholder)
-        self.welcome_message_body = self.welcome_message_body.format(**placeholder)
+
+        replaced_header = self.welcome_message_header.format(**placeholder)
+        replaced_body = self.welcome_message_body.format(**placeholder)
+
+        return replaced_header, replaced_body

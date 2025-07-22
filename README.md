@@ -115,6 +115,15 @@ You can use the following placeholders in your welcome message.
 | {player_total_exp} | Player's total experience points |
 | {player_exp_progress} | Player's current experience progress towards the next level |
 | {player_ping} | Player's average ping |
+| {player_dimension_name} | Player's current dimension name |
+| {player_dimension_id} | Player's current dimension id |
+| {player_coordinate_x} | Player's current x coordinate |
+| {player_coordinate_y} | Player's current y coordinate |
+| {player_coordinate_z} | Player's current z coordinate |
+| {player_health} | Player's health |
+| {player_max_health} | Player's max health |
+| {player_xuid} | Player's XUID |
+| {player_uuid} | Player's UUID |
 | {server_level_name} | Server's level name |
 | {server_max_players} | The maximum amount of player's which can login to this server |
 | {server_online_players} | Current online players count |
