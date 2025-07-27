@@ -1,7 +1,18 @@
 from endstone.plugin import Plugin
 from endstone.event import event_handler, PlayerJoinEvent
 from endstone.form import ModalForm, Label
-import time
+from enum import IntEnum
+
+
+class MessageType(IntEnum):
+    DISABLED = 0
+    CHAT = 1
+    TIP = 2
+    POPUP = 3
+    TOAST = 4
+    TITLE = 5
+    FORM = 6
+
 
 class WelcomeMessage(Plugin):
     api_version = "0.6"
@@ -9,45 +20,58 @@ class WelcomeMessage(Plugin):
     def on_enable(self) -> None:
         self.save_default_config()
         self.register_events(self)
-        self.welcome_message_type = max(0, min(int(self.config["welcome_message"]["type"]), 6))
 
-        if self.welcome_message_type > 0:
-            self.welcome_message_header = str(self.config["welcome_message"]["header"])
-            self.welcome_message_body = str(self.config["welcome_message"]["body"])
-            self.welcome_message_form_button_text = str(self.config["welcome_message"]["form_button_text"])
-            self.welcome_message_wait_before = max(0, min(int(self.config["welcome_message"]["wait_before"]), 5))
+        config = self.config["welcome_message"]
+        self.welcome_message_type = MessageType(
+            max(0, min(int(config["type"]), 6))
+        )
+
+        if self.welcome_message_type != MessageType.DISABLED:
+            self.welcome_message_header = str(config["header"])
+            self.welcome_message_body = str(config["body"])
+            self.welcome_message_form_button_text = str(config["form_button_text"])
+            self.welcome_message_wait_before = max(0, min(int(config["wait_before"]), 5))
         else:
-            self.logger.info("Welcome Message is disabled in the config file!")
+            self.logger.info("Welcome Message is disabled in the config file.")
 
     @event_handler
     def on_player_join(self, event: PlayerJoinEvent):
-        if self.welcome_message_type > 0:
-            self.show_message(event.player)
-
-    def show_message(self, player):
-        welcome_message_header, welcome_message_body = self.replace_placeholders(player)
+        if self.welcome_message_type == MessageType.DISABLED:
+            return
 
         if self.welcome_message_wait_before > 0:
-            time.sleep(self.welcome_message_wait_before)
+            wait_ticks = self.welcome_message_wait_before * 20
+            task = self.make_delayed_task(event.player)
+            self.server.scheduler.run_task(self, task, delay=wait_ticks)
+        else:
+            self.show_message(event.player)
+
+    def make_delayed_task(self, player):
+        def task():
+            self.show_message(player)
+        return task
+
+    def show_message(self, player):
+        header, body = self.replace_placeholders(player)
 
         match self.welcome_message_type:
-            case 1:
-                player.send_message(welcome_message_body)
-            case 2:
-                player.send_tip(welcome_message_body)
-            case 3:
-                player.send_popup(welcome_message_body)
-            case 4:
-                player.send_toast(welcome_message_header, welcome_message_body)
-            case 5:
-                player.send_title(welcome_message_header, welcome_message_body)
-            case 6:
-                welcome_form = ModalForm(
-                    title = welcome_message_header,
-                    controls = [Label(text=welcome_message_body + '\n\n')],
-                    submit_button = self.welcome_message_form_button_text
+            case MessageType.CHAT:
+                player.send_message(body)
+            case MessageType.TIP:
+                player.send_tip(body)
+            case MessageType.POPUP:
+                player.send_popup(body)
+            case MessageType.TOAST:
+                player.send_toast(header, body)
+            case MessageType.TITLE:
+                player.send_title(header, body)
+            case MessageType.FORM:
+                form = ModalForm(
+                    title=header,
+                    controls=[Label(text=body + "\n\n")],
+                    submit_button=self.welcome_message_form_button_text
                 )
-                player.send_form(welcome_form)
+                player.send_form(form)
 
     def replace_placeholders(self, player):
         placeholder = {
@@ -63,7 +87,7 @@ class WelcomeMessage(Plugin):
             'player_total_exp': player.total_exp,
             'player_exp_progress': f"{player.exp_progress:.2f}",
             'player_ping': player.ping,
-            'player_dimension_name': player.location.dimension.type.name.replace("_"," ").title(),
+            'player_dimension_name': player.location.dimension.type.name.replace("_", " ").title(),
             'player_dimension_id': player.location.dimension.type.value,
             'player_coordinate_x': int(player.location.x),
             'player_coordinate_y': int(player.location.y),
