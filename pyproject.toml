@@ -21,7 +21,6 @@ Homepage = "https://github.com/cenk/endstone-welcome-message"
 welcome-message = "endstone_welcome_message:WelcomeMessage"
 
 [tool.hatch.build]
-ignore-vcs = true
 exclude = [
   "/.*"
 ]
