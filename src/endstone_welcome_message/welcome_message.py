@@ -30,9 +30,9 @@ class WelcomeMessage(Plugin):
             "description": "Tests welcome wessage. §gFor help: §3/wmtest help",
             "usages": [
                 "/wmtest (help)[help: TestHelp]",
-                "/wmtest (chat|tip|popup|toast|title|form)[type: TestType]"
+                "/wmtest (chat|tip|popup|toast|title|form)[type: TestType]",
             ],
-            "permissions": ["welcome_message.command.wmtest"]
+            "permissions": ["welcome_message.command.wmtest"],
         },
         "wmset": {
             "description": "Sets welcome message options. §gFor help: §3/wmset help",
@@ -40,57 +40,51 @@ class WelcomeMessage(Plugin):
                 "/wmset (help)[help: SetHelp]",
                 "/wmset (type)[typekey: SetTypeKey] (chat|tip|popup|toast|title|form)<typevalue: SetTypeValue>",
                 "/wmset (header|body|button)[confkey: ConfKey] <confvalue: message>",
-                "/wmset (wait)[wait: WaitKey] <seconds: int>"
+                "/wmset (wait)[wait: WaitKey] <seconds: int>",
             ],
-            "permissions": ["welcome_message.command.wmset"]
+            "permissions": ["welcome_message.command.wmset"],
         },
         "wmenable": {
             "description": "Enables the welcome message with the specified type. §gFor help: §3/wmenable help",
             "usages": [
                 "/wmenable (help)[help: EnableHelp]",
-                "/wmenable (chat|tip|popup|toast|title|form)<typevalue: EnableTypeValue>"
+                "/wmenable (chat|tip|popup|toast|title|form)<typevalue: EnableTypeValue>",
             ],
-            "permissions": ["welcome_message.command.wmenable"]
+            "permissions": ["welcome_message.command.wmenable"],
         },
         "wmdisable": {
             "description": "Disables the welcome message. §gFor help: §3/wmdisable help",
-            "usages": [
-                "/wmdisable (help)[help: DisableHelp]",
-                "/wmdisable"
-            ],
-            "permissions": ["welcome_message.command.wmdisable"]
+            "usages": ["/wmdisable (help)[help: DisableHelp]", "/wmdisable"],
+            "permissions": ["welcome_message.command.wmdisable"],
         },
         "wmopts": {
             "description": "Prints the current options for the welcome message. §gFor help: §3/wmopts help",
-            "usages": [
-                "/wmopts (help)[help: OptsHelp]",
-                "/wmopts"
-            ],
-            "permissions": ["welcome_message.command.wmopts"]
-        }
+            "usages": ["/wmopts (help)[help: OptsHelp]", "/wmopts"],
+            "permissions": ["welcome_message.command.wmopts"],
+        },
     }
 
     permissions = {
         "welcome_message.command.wmtest": {
             "description": "Allow usage of /wmtest command",
-            "default": "op"
+            "default": "op",
         },
         "welcome_message.command.wmset": {
             "description": "Allow usage of /wmset command",
-            "default": "op"
+            "default": "op",
         },
         "welcome_message.command.wmenable": {
             "description": "Allow usage of /wmenable command",
-            "default": "op"
+            "default": "op",
         },
         "welcome_message.command.wmdisable": {
             "description": "Allow usage of /wmdisable command",
-            "default": "op"
+            "default": "op",
         },
         "welcome_message.command.wmopts": {
             "description": "Allow usage of /wmopts command",
-            "default": "op"
-        }
+            "default": "op",
+        },
     }
 
     def on_enable(self) -> None:
@@ -136,9 +130,10 @@ class WelcomeMessage(Plugin):
     def _task(self, p):
         def run():
             self._show_msg(p)
+
         return run
 
-    def _show_msg(self, p, test_type = None):
+    def _show_msg(self, p, test_type=None):
         header, body = self._fill_placeholders(p)
         if test_type:
             msg_type = test_type
@@ -160,7 +155,7 @@ class WelcomeMessage(Plugin):
                 form = ModalForm(
                     title=header,
                     controls=[Label(text=body + "\n")],
-                    submit_button=self.btn_text
+                    submit_button=self.btn_text,
                 )
                 p.send_form(form)
 
@@ -168,36 +163,38 @@ class WelcomeMessage(Plugin):
         s = self.server
 
         values = {
-            'player_name': p.name,
-            'player_locale': p.locale,
-            'player_device_os': p.device_os,
-            'player_device_id': p.device_id,
-            'player_hostname': p.address.hostname,
-            'player_port': p.address.port,
-            'player_game_mode': p.game_mode.name.capitalize(),
-            'player_game_version': p.game_version,
-            'player_exp_level': p.exp_level,
-            'player_total_exp': p.total_exp,
-            'player_exp_progress': f"{p.exp_progress:.2f}",
-            'player_ping': p.ping,
-            'player_dimension_name': p.location.dimension.type.name.replace("_", " ").title(),
-            'player_dimension_id': p.location.dimension.type.value,
-            'player_coordinate_x': int(p.location.x),
-            'player_coordinate_y': int(p.location.y),
-            'player_coordinate_z': int(p.location.z),
-            'player_xuid': p.xuid,
-            'player_uuid': p.unique_id,
-            'player_health': p.health,
-            'player_max_health': p.max_health,
-            'server_level_name': s.level.name.replace("_", " ").title(),
-            'server_max_players': s.max_players,
-            'server_online_players': len(s.online_players),
-            'server_start_time': s.start_time.strftime('%d %b %Y %H:%M:%S'),
-            'server_locale': s.language.locale,
-            'server_endstone_version': s.version,
-            'server_minecraft_version': s.minecraft_version,
-            'server_port': s.port,
-            'server_port_v6': s.port_v6
+            "player_name": p.name,
+            "player_locale": p.locale,
+            "player_device_os": p.device_os,
+            "player_device_id": p.device_id,
+            "player_hostname": p.address.hostname,
+            "player_port": p.address.port,
+            "player_game_mode": p.game_mode.name.capitalize(),
+            "player_game_version": p.game_version,
+            "player_exp_level": p.exp_level,
+            "player_total_exp": p.total_exp,
+            "player_exp_progress": f"{p.exp_progress:.2f}",
+            "player_ping": p.ping,
+            "player_dimension_name": p.location.dimension.type.name.replace(
+                "_", " "
+            ).title(),
+            "player_dimension_id": p.location.dimension.type.value,
+            "player_coordinate_x": int(p.location.x),
+            "player_coordinate_y": int(p.location.y),
+            "player_coordinate_z": int(p.location.z),
+            "player_xuid": p.xuid,
+            "player_uuid": p.unique_id,
+            "player_health": p.health,
+            "player_max_health": p.max_health,
+            "server_level_name": s.level.name.replace("_", " ").title(),
+            "server_max_players": s.max_players,
+            "server_online_players": len(s.online_players),
+            "server_start_time": s.start_time.strftime("%d %b %Y %H:%M:%S"),
+            "server_locale": s.language.locale,
+            "server_endstone_version": s.version,
+            "server_minecraft_version": s.minecraft_version,
+            "server_port": s.port,
+            "server_port_v6": s.port_v6,
         }
 
         formatter = SafeFormatter()
@@ -215,7 +212,9 @@ class WelcomeMessage(Plugin):
 §3wait:§r {self.wait_secs}"""
         p.send_message(conf)
 
-    def on_command(self, sender: CommandSender, command: Command, args: list[str]) -> bool:
+    def on_command(
+        self, sender: CommandSender, command: Command, args: list[str]
+    ) -> bool:
         if not isinstance(sender, Player):
             sender.send_error_message("Only players can use this command.")
             return False
@@ -223,13 +222,17 @@ class WelcomeMessage(Plugin):
         match command.name:
             case "wmtest":
                 if len(args) == 0 or args[0] == "help":
-                    sender.send_message("§gUsage: §3/wmtest chat|tip|popup|toast|title|form\n§gExample: §3/wmtest chat")
+                    sender.send_message(
+                        "§gUsage: §3/wmtest chat|tip|popup|toast|title|form\n§gExample: §3/wmtest chat"
+                    )
                 else:
                     self._show_msg(sender, MessageType[args[0].upper()])
 
             case "wmset":
                 if len(args) == 0 or args[0] == "help":
-                    sender.send_message("§gUsage: §3/wmset type|header|body|button|wait <value>\n§gExamples:\n§3/wmset type title\n/wmset header Hello {player_name}\n/wmset body Welcome to our Server\\nYour ping is {player_ping}\n/wmset button Close\n/wmset wait 3")
+                    sender.send_message(
+                        "§gUsage: §3/wmset type|header|body|button|wait <value>\n§gExamples:\n§3/wmset type title\n/wmset header Hello {player_name}\n/wmset body Welcome to our Server\\nYour ping is {player_ping}\n/wmset button Close\n/wmset wait 3"
+                    )
                 else:
                     self._set_config(args[0], args[1])
                     self._load_config()
@@ -237,11 +240,15 @@ class WelcomeMessage(Plugin):
 
             case "wmenable":
                 if len(args) == 0 or args[0] == "help":
-                    sender.send_message("§gUsage: §3/wmenable chat|tip|popup|toast|title|form\n§gExample: §3/wmenable chat")
+                    sender.send_message(
+                        "§gUsage: §3/wmenable chat|tip|popup|toast|title|form\n§gExample: §3/wmenable chat"
+                    )
                 else:
                     self._set_config("type", args[0])
                     self._load_config()
-                    sender.send_message("§gWelcome essage is §aenabled §gwith §3", args[0], "§gtype.")
+                    sender.send_message(
+                        "§gWelcome essage is §aenabled §gwith §3", args[0], "§gtype."
+                    )
 
             case "wmdisable":
                 if len(args) == 0:
