@@ -1,6 +1,8 @@
 from endstone.plugin import Plugin
 from endstone.event import event_handler, PlayerJoinEvent
 from endstone.form import ModalForm, Label
+from endstone.command import Command, CommandSender
+from endstone import Player
 from enum import IntEnum
 import string
 
@@ -23,20 +25,101 @@ class MessageType(IntEnum):
 class WelcomeMessage(Plugin):
     api_version = "0.6"
 
+    commands = {
+        "wmtest": {
+            "description": "Tests welcome wessage. §gFor help: §3/wmtest help",
+            "usages": [
+                "/wmtest (help)[help: TestHelp]",
+                "/wmtest (chat|tip|popup|toast|title|form)[type: TestType]"
+            ],
+            "permissions": ["welcome_message.command.wmtest"]
+        },
+        "wmset": {
+            "description": "Sets welcome message options. §gFor help: §3/wmset help",
+            "usages": [
+                "/wmset (help)[help: SetHelp]",
+                "/wmset (type)[typekey: SetTypeKey] (chat|tip|popup|toast|title|form)<typevalue: SetTypeValue>",
+                "/wmset (header|body|button)[confkey: ConfKey] <confvalue: message>",
+                "/wmset (wait)[wait: WaitKey] <seconds: int>"
+            ],
+            "permissions": ["welcome_message.command.wmset"]
+        },
+        "wmenable": {
+            "description": "Enables the welcome message with the specified type. §gFor help: §3/wmenable help",
+            "usages": [
+                "/wmenable (help)[help: EnableHelp]",
+                "/wmenable (chat|tip|popup|toast|title|form)<typevalue: EnableTypeValue>"
+            ],
+            "permissions": ["welcome_message.command.wmenable"]
+        },
+        "wmdisable": {
+            "description": "Disables the welcome message. §gFor help: §3/wmdisable help",
+            "usages": [
+                "/wmdisable (help)[help: DisableHelp]",
+                "/wmdisable"
+            ],
+            "permissions": ["welcome_message.command.wmdisable"]
+        },
+        "wmopts": {
+            "description": "Prints the current options for the welcome message. §gFor help: §3/wmopts help",
+            "usages": [
+                "/wmopts (help)[help: OptsHelp]",
+                "/wmopts"
+            ],
+            "permissions": ["welcome_message.command.wmopts"]
+        }
+    }
+
+    permissions = {
+        "welcome_message.command.wmtest": {
+            "description": "Allow usage of /wmtest command",
+            "default": "op"
+        },
+        "welcome_message.command.wmset": {
+            "description": "Allow usage of /wmset command",
+            "default": "op"
+        },
+        "welcome_message.command.wmenable": {
+            "description": "Allow usage of /wmenable command",
+            "default": "op"
+        },
+        "welcome_message.command.wmdisable": {
+            "description": "Allow usage of /wmdisable command",
+            "default": "op"
+        },
+        "welcome_message.command.wmopts": {
+            "description": "Allow usage of /wmopts command",
+            "default": "op"
+        }
+    }
+
     def on_enable(self) -> None:
         self.save_default_config()
         self.register_events(self)
+        self._load_config()
 
+    def _set_config(self, key, val):
+        match key:
+            case "type":
+                val = MessageType[val.upper()].value
+            case "body":
+                val = val.replace("\\n", "\n")
+            case "button":
+                key = "form_button_text"
+            case "wait":
+                key = "wait_before"
+                val = max(0, min(int(val), 5))
+
+        self.config["welcome_message"][key] = val
+        self.save_config()
+
+    def _load_config(self):
         cfg = self.config["welcome_message"]
         self.msg_type = MessageType(max(0, min(int(cfg["type"]), 6)))
-
-        if self.msg_type != MessageType.DISABLED:
-            self.msg_header = str(cfg["header"])
-            self.msg_body = str(cfg["body"])
-            self.btn_text = str(cfg["form_button_text"])
-            self.wait_secs = max(0, min(int(cfg["wait_before"]), 5))
-        else:
-            self.logger.info("Welcome Message is disabled in the config file.")
+        self.msg_header = str(cfg["header"])
+        self.msg_body = str(cfg["body"])
+        self.btn_text = str(cfg["form_button_text"])
+        self.wait_secs = max(0, min(int(cfg["wait_before"]), 5))
 
     @event_handler
     def on_player_join(self, event: PlayerJoinEvent):
@@ -55,10 +138,14 @@ class WelcomeMessage(Plugin):
             self._show_msg(p)
         return run
 
-    def _show_msg(self, p):
+    def _show_msg(self, p, test_type = None):
         header, body = self._fill_placeholders(p)
+        if test_type:
+            msg_type = test_type
+        else:
+            msg_type = self.msg_type
 
-        match self.msg_type:
+        match msg_type:
             case MessageType.CHAT:
                 p.send_message(body)
             case MessageType.TIP:
@@ -72,7 +159,7 @@ class WelcomeMessage(Plugin):
             case MessageType.FORM:
                 form = ModalForm(
                     title=header,
-                    controls=[Label(text=body + "\n\n")],
+                    controls=[Label(text=body + "\n")],
                     submit_button=self.btn_text
                 )
                 p.send_form(form)
@@ -114,4 +201,60 @@ class WelcomeMessage(Plugin):
         }
 
         formatter = SafeFormatter()
-        return formatter.format(self.msg_header, **values), formatter.format(self.msg_body, **values)
+        header = formatter.format(self.msg_header, **values)
+        body = formatter.format(self.msg_body, **values)
+
+        return header, body
+
+    def _print_config(self, p):
+        conf = f"""§gWelcome Message options:§r
+§3type:§r {MessageType(self.msg_type).name.lower()}§r
+§3header:§r {self.msg_header}§r
+§3body:§r {self.msg_body.replace("\n", "\\n")}§r
+§3button:§r {self.btn_text}§r
+§3wait:§r {self.wait_secs}"""
+        p.send_message(conf)
+
+    def on_command(self, sender: CommandSender, command: Command, args: list[str]) -> bool:
+        if not isinstance(sender, Player):
+            sender.send_error_message("Only players can use this command.")
+            return False
+
+        match command.name:
+            case "wmtest":
+                if len(args) == 0 or args[0] == "help":
+                    sender.send_message("§gUsage: §3/wmtest chat|tip|popup|toast|title|form\n§gExample: §3/wmtest chat")
+                else:
+                    self._show_msg(sender, MessageType[args[0].upper()])
+
+            case "wmset":
+                if len(args) == 0 or args[0] == "help":
+                    sender.send_message("§gUsage: §3/wmset type|header|body|button|wait <value>\n§gExamples:\n§3/wmset type title\n/wmset header Hello {player_name}\n/wmset body Welcome to our Server\\nYour ping is {player_ping}\n/wmset button Close\n/wmset wait 3")
+                else:
+                    self._set_config(args[0], args[1])
+                    self._load_config()
+                    self._print_config(sender)
+
+            case "wmenable":
+                if len(args) == 0 or args[0] == "help":
+                    sender.send_message("§gUsage: §3/wmenable chat|tip|popup|toast|title|form\n§gExample: §3/wmenable chat")
+                else:
+                    self._set_config("type", args[0])
+                    self._load_config()
+                    sender.send_message("§gWelcome essage is §aenabled §gwith §3", args[0], "§gtype.")
+
+            case "wmdisable":
+                if len(args) == 0:
+                    self._set_config("type", "disabled")
+                    self._load_config()
+                    sender.send_message("§gWelcome message §cdisabled§g.")
+                elif args[0] == "help":
+                    sender.send_message("§gUsage: §3/wmdisable")
+
+            case "wmopts":
+                if len(args) == 0:
+                    self._print_config(sender)
+                elif args[0] == "help":
+                    sender.send_message("§gUsage: §3/wmopts")
+
+        return True
