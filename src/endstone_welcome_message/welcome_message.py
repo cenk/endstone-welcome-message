@@ -162,7 +162,7 @@ class WelcomeMessage(Plugin):
             case MessageType.FORM:
                 form = ModalForm(
                     title=header,
-                    controls=[Label(text=body + "\n")],
+                    controls=[Label(text=body)],
                     submit_button=self.btn_text,
                 )
                 p.send_form(form)
