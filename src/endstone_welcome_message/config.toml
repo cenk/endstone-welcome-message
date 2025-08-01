@@ -1,4 +1,5 @@
 [welcome_message]
+enabled = false
 type = 1
 header = "§bWelcome §s{player_name}"
 body = "§3This server is running §gEndstone {server_endstone_version} §3on §7Minecraft {server_minecraft_version}§3.§r\n§3Your average ping is §4{player_ping}§3."

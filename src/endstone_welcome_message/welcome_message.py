@@ -13,7 +13,6 @@ class SafeFormatter(string.Formatter):
 
 
 class MessageType(IntEnum):
-    DISABLED = 0
     CHAT = 1
     TIP = 2
     POPUP = 3
@@ -29,37 +28,35 @@ class WelcomeMessage(Plugin):
         "wmtest": {
             "description": "Tests welcome wessage. §gFor help: §3/wmtest help",
             "usages": [
-                "/wmtest (help)[help: TestHelp]",
+                "/wmtest",
                 "/wmtest (chat|tip|popup|toast|title|form)[type: TestType]",
+                "/wmtest (help)[help: TestHelp]",
             ],
             "permissions": ["welcome_message.command.wmtest"],
         },
         "wmset": {
             "description": "Sets welcome message options. §gFor help: §3/wmset help",
             "usages": [
-                "/wmset (help)[help: SetHelp]",
                 "/wmset (type)[typekey: SetTypeKey] (chat|tip|popup|toast|title|form)<typevalue: SetTypeValue>",
                 "/wmset (header|body|button)[confkey: ConfKey] <confvalue: message>",
                 "/wmset (wait)[wait: WaitKey] <seconds: int>",
+                "/wmset (help)[help: SetHelp]",
             ],
             "permissions": ["welcome_message.command.wmset"],
         },
         "wmenable": {
             "description": "Enables the welcome message with the specified type. §gFor help: §3/wmenable help",
-            "usages": [
-                "/wmenable (help)[help: EnableHelp]",
-                "/wmenable (chat|tip|popup|toast|title|form)<typevalue: EnableTypeValue>",
-            ],
+            "usages": ["/wmenable", "/wmenable (help)[help: EnableHelp]"],
             "permissions": ["welcome_message.command.wmenable"],
         },
         "wmdisable": {
             "description": "Disables the welcome message. §gFor help: §3/wmdisable help",
-            "usages": ["/wmdisable (help)[help: DisableHelp]", "/wmdisable"],
+            "usages": ["/wmdisable", "/wmdisable (help)[help: DisableHelp]"],
             "permissions": ["welcome_message.command.wmdisable"],
         },
         "wmopts": {
             "description": "Prints the current options for the welcome message. §gFor help: §3/wmopts help",
-            "usages": ["/wmopts (help)[help: OptsHelp]", "/wmopts"],
+            "usages": ["/wmopts", "/wmopts (help)[help: OptsHelp]"],
             "permissions": ["welcome_message.command.wmopts"],
         },
     }
@@ -109,6 +106,17 @@ class WelcomeMessage(Plugin):
 
     def _load_config(self):
         cfg = self.config["welcome_message"]
+
+        # Prepare the config for the new enable switch
+        if "enabled" not in cfg:
+            if cfg["type"] > 0:
+                cfg["enabled"] = True
+            else:
+                cfg["enabled"] = False
+                cfg["type"] = 1  # Default message type
+            self.save_config()
+
+        self.msg_enabled = bool(cfg["enabled"])
         self.msg_type = MessageType(max(0, min(int(cfg["type"]), 6)))
         self.msg_header = str(cfg["header"])
         self.msg_body = str(cfg["body"])
@@ -117,7 +125,7 @@ class WelcomeMessage(Plugin):
 
     @event_handler
     def on_player_join(self, event: PlayerJoinEvent):
-        if self.msg_type == MessageType.DISABLED:
+        if self.msg_enabled == False:
             return
 
         if self.wait_secs > 0:
@@ -204,7 +212,13 @@ class WelcomeMessage(Plugin):
         return header, body
 
     def _print_config(self, p):
+        if self.msg_enabled:
+            status = "§aenabled"
+        else:
+            status = "§cdisabled"
+
         conf = f"""§gWelcome Message options:§r
+§3status:§r {status}§r
 §3type:§r {MessageType(self.msg_type).name.lower()}
 §3header:§r {self.msg_header}§r
 §3body:§r {self.msg_body.replace("\n", "\\n")}§r
@@ -221,9 +235,11 @@ class WelcomeMessage(Plugin):
 
         match command.name:
             case "wmtest":
-                if len(args) == 0 or args[0] == "help":
+                if len(args) == 0:
+                    self._show_msg(sender)
+                elif args[0] == "help":
                     sender.send_message(
-                        "§gUsage: §3/wmtest chat|tip|popup|toast|title|form\n§gExample: §3/wmtest chat"
+                        "§gUsage:\nTest with current type:\n§3/wmtest\n§gTest with specified type:\n§3/wmtest chat|tip|popup|toast|title|form\n§gExamples:\n§3/wmtest\n/wmtest title"
                     )
                 else:
                     self._show_msg(sender, MessageType[args[0].upper()])
@@ -231,28 +247,26 @@ class WelcomeMessage(Plugin):
             case "wmset":
                 if len(args) == 0 or args[0] == "help":
                     sender.send_message(
-                        "§gUsage: §3/wmset type|header|body|button|wait <value>\n§gExamples:\n§3/wmset type title\n/wmset header Hello {player_name}\n/wmset body Welcome to our Server\\nYour ping is {player_ping}\n/wmset button Close\n/wmset wait 3"
+                        "§gUsage: §3/wmset type|header|body|button|wait <value>\n§gExamples:\n§3/wmset type title\n/wmset header Hello {player_name}\n/wmset body Welcome to our Server\n/wmset button Close\n/wmset wait 3"
                     )
                 else:
                     self._set_config(args[0], args[1])
                     self._load_config()
-                    self._print_config(sender)
+                    sender.send_message(
+                        "§gWelcome message option set:\n" + args[0] + ": §r" + args[1]
+                    )
 
             case "wmenable":
-                if len(args) == 0 or args[0] == "help":
-                    sender.send_message(
-                        "§gUsage: §3/wmenable chat|tip|popup|toast|title|form\n§gExample: §3/wmenable chat"
-                    )
-                else:
-                    self._set_config("type", args[0])
+                if len(args) == 0:
+                    self._set_config("enabled", True)
                     self._load_config()
-                    sender.send_message(
-                        "§gWelcome essage is §aenabled §gwith §3", args[0], "§gtype."
-                    )
+                    sender.send_message("§gWelcome message is §aenabled§g.")
+                elif args[0] == "help":
+                    sender.send_message("§gUsage: §3/wmenable")
 
             case "wmdisable":
                 if len(args) == 0:
-                    self._set_config("type", "disabled")
+                    self._set_config("enabled", False)
                     self._load_config()
                     sender.send_message("§gWelcome message §cdisabled§g.")
                 elif args[0] == "help":
