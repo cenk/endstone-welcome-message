@@ -205,7 +205,7 @@ class WelcomeMessage(Plugin):
 
     def _print_config(self, p):
         conf = f"""§gWelcome Message options:§r
-§3type:§r {MessageType(self.msg_type).name.lower()}§r
+§3type:§r {MessageType(self.msg_type).name.lower()}
 §3header:§r {self.msg_header}§r
 §3body:§r {self.msg_body.replace("\n", "\\n")}§r
 §3button:§r {self.btn_text}§r
