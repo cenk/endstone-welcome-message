@@ -103,6 +103,7 @@ class WelcomeMessage(Plugin):
 
         self.config["welcome_message"][key] = val
         self.save_config()
+        self._load_config()
 
     def _load_config(self):
         cfg = self.config["welcome_message"]
@@ -280,7 +281,6 @@ class WelcomeMessage(Plugin):
             case "wmenable":
                 if len(args) == 0:
                     self._set_config("enabled", True)
-                    self._load_config()
                     sender.send_message(
                         self.print_head + "§gWelcome message is §aenabled§g."
                     )
