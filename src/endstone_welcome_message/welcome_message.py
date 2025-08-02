@@ -89,10 +89,14 @@ class WelcomeMessage(Plugin):
         self.register_events(self)
         self._load_config()
 
-    def _set_config(self, key, val):
+    def _set_config(self, sender, key, val):
         match key:
+            case "enabled":
+                pass
             case "type":
                 val = MessageType[val.upper()].value
+            case "header":
+                pass
             case "body":
                 val = val.replace("\\n", "\n")
             case "button":
@@ -100,6 +104,8 @@ class WelcomeMessage(Plugin):
             case "wait":
                 key = "wait_before"
                 val = max(0, min(int(val), 5))
+            case _:
+                sender.send_error_message("Unknown config option:" + key)
 
         self.config["welcome_message"][key] = val
         self.save_config()
@@ -108,7 +114,7 @@ class WelcomeMessage(Plugin):
     def _load_config(self):
         cfg = self.config["welcome_message"]
 
-        # Prepare the config for the new enable switch
+        # Prepare old configs for the new enable switch
         if "enabled" not in cfg:
             if cfg["type"] > 0:
                 cfg["enabled"] = True
@@ -268,8 +274,7 @@ class WelcomeMessage(Plugin):
                         + "§c| §3/wmset wait 3"
                     )
                 else:
-                    self._set_config(args[0], args[1])
-                    self._load_config()
+                    self._set_config(sender, args[0], args[1])
                     sender.send_message(
                         self.print_head
                         + "§gWelcome message option set:\n"
@@ -280,7 +285,7 @@ class WelcomeMessage(Plugin):
 
             case "wmenable":
                 if len(args) == 0:
-                    self._set_config("enabled", True)
+                    self._set_config(sender, "enabled", True)
                     sender.send_message(
                         self.print_head + "§gWelcome message is §aenabled§g."
                     )
@@ -289,8 +294,7 @@ class WelcomeMessage(Plugin):
 
             case "wmdisable":
                 if len(args) == 0:
-                    self._set_config("enabled", False)
-                    self._load_config()
+                    self._set_config(sender, "enabled", False)
                     sender.send_message(
                         self.print_head + "§gWelcome message §cdisabled§g."
                     )
