@@ -61,10 +61,10 @@ Used to manually preview the welcome message for testing before enabling it serv
     - Sends a test message using the specified type.
     - Valid values: `chat`, `tip`, `popup`, `toast`, `title`, `form`
 
-### `/wmenable`
+### `/wmenable` or `/wmon`
 Enables the welcome message system with the current configuration options.
 
-### `/wmdisable`
+### `/wmdisable` or `/wmoff`
 Disables the welcome message system.
 
 ---

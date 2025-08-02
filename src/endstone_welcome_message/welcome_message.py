@@ -47,11 +47,13 @@ class WelcomeMessage(Plugin):
         "wmenable": {
             "description": "Enables the welcome message with the specified type. §gFor help: §3/wmenable help",
             "usages": ["/wmenable", "/wmenable (help)[help: EnableHelp]"],
+            "aliases": ["wmon"],
             "permissions": ["welcome_message.command.wmenable"],
         },
         "wmdisable": {
             "description": "Disables the welcome message. §gFor help: §3/wmdisable help",
             "usages": ["/wmdisable", "/wmdisable (help)[help: DisableHelp]"],
+            "aliases": ["wmoff"],
             "permissions": ["welcome_message.command.wmdisable"],
         },
         "wmopts": {
