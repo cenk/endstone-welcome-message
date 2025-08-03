@@ -33,19 +33,24 @@ Used to update specific configuration options for the welcome message.
 - `/wmset type <value>`
     - Sets the message type.
     - Valid values: `chat`, `tip`, `popup`, `toast`, `title`, `form`
+    - Example: `/wmset type title`
 - `/wmset header <value>`
     - Sets the message header.
     - Supports placeholders and Minecraft color codes.
     - Only used for `toast`, `title`, and `form` types.
+    - Example: `/wmset header Welcome {player_name}!`
 - `/wmset body <value>`
     - Sets the message body.
     - Supports placeholders and Minecraft color codes.
     - Use `\n` for new lines.
+    - Example: `/wmset body Hi {player_name}\nWelcome to our server`
 - `/wmset button <value>`
-    - Sets the button text.
+    - Sets the form button text.
     - Only used for form type.
+    - Example: `/wmset button Close`
 - `/wmset wait <0-5>`
     - Delays message for 0–5 seconds after player joins.
+    - Example: `/wmset wait 2`
 
 ### `/wmopts`
 Displays the current configuration for the welcome message.
@@ -60,12 +65,17 @@ Used to manually preview the welcome message for testing before enabling it serv
 - `/wmtest [value]`
     - Sends a test message using the specified type.
     - Valid values: `chat`, `tip`, `popup`, `toast`, `title`, `form`
+    - Example: `/wmtest popup`
 
 ### `/wmenable` or `/wmon`
 Enables the welcome message system with the current configuration options.
 
+- `/wmenable` or `/wmon`
+
 ### `/wmdisable` or `/wmoff`
 Disables the welcome message system.
+
+- `/wmdisable` or `/wmoff`
 
 ---
 
