@@ -34,21 +34,25 @@ Used to update specific configuration options for the welcome message.
     - Sets the message type.
     - Valid values: `chat`, `tip`, `popup`, `toast`, `title`, `form`
     - Example: `/wmset type title`
+
 - `/wmset header <value>`
     - Sets the message header.
     - Supports placeholders and Minecraft color codes.
     - Only used for `toast`, `title`, and `form` types.
     - Example: `/wmset header Welcome {player_name}!`
+
 - `/wmset body <value>`
     - Sets the message body.
     - Supports placeholders and Minecraft color codes.
     - Use `\n` for new lines.
     - Note that the Toast message type does not support new lines.
     - Example: `/wmset body Hi {player_name}\nWelcome to our server`
+
 - `/wmset button <value>`
     - Sets the form button text.
     - Only used for form type.
     - Example: `/wmset button Close`
+
 - `/wmset wait <0-5>`
     - Delays message for 0–5 seconds after player joins.
     - Example: `/wmset wait 2`
@@ -62,9 +66,10 @@ Displays the current configuration for the welcome message.
 Used to manually preview the welcome message for testing before enabling it server-wide.
 
 - `/wmtest`
-    - Sends a test message using the currently active type.
+    - Previews a test message using the currently active type.
+
 - `/wmtest [value]`
-    - Sends a test message using the specified type.
+    - Previews a test message using the specified type.
     - Valid values: `chat`, `tip`, `popup`, `toast`, `title`, `form`
     - Example: `/wmtest popup`
 
@@ -77,6 +82,12 @@ Enables the welcome message system with the current configuration options.
 Disables the welcome message system.
 
 - `/wmdisable` or `/wmoff`
+
+---
+
+## Installation
+1. Download the latest `.whl` file from [GitHub Releases](https://github.com/cenk/endstone-welcome-message/releases) and place it into your `plugins/` folder.
+2. Restart or reload the server.
 
 ---
 
@@ -114,9 +125,3 @@ You can use the following placeholders in your welcome message.
 | {server_minecraft_version} | Server's Minecraft version |
 | {server_port} | Server's IPv4 port |
 | {server_port_v6} | Server's IPv6 port |
-
----
-
-## Installation
-1. Download the latest `.whl` file from [GitHub Releases](https://github.com/cenk/endstone-welcome-message/releases) and place it into your `plugins/` folder.
-2. Restart or reload the server.
