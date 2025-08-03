@@ -25,7 +25,7 @@ jobs:
         python-version: "3.13"
 
     - name: Install pypa/build
-      run: python3 -m pip install --upgrade pip build
+      run: python3 -m pip install --upgrade build
 
     - name: Build a binary wheel
       run: python3 -m build
