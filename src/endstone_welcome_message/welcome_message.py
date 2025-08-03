@@ -45,7 +45,7 @@ class WelcomeMessage(Plugin):
             "permissions": ["welcome_message.command.wmset"],
         },
         "wmenable": {
-            "description": "Enables the welcome message with the specified type. §gFor help: §3/wmenable help",
+            "description": "Enables the welcome message. §gFor help: §3/wmenable help",
             "usages": ["/wmenable", "/wmenable (help)[help: EnableHelp]"],
             "aliases": ["wmon"],
             "permissions": ["welcome_message.command.wmenable"],
@@ -93,12 +93,8 @@ class WelcomeMessage(Plugin):
 
     def _set_config(self, sender, key, val):
         match key:
-            case "enabled":
-                pass
             case "type":
                 val = MessageType[val.upper()].value
-            case "header":
-                pass
             case "body":
                 val = val.replace("\\n", "\n")
             case "button":
@@ -106,8 +102,6 @@ class WelcomeMessage(Plugin):
             case "wait":
                 key = "wait_before"
                 val = max(0, min(int(val), 5))
-            case _:
-                sender.send_error_message("Unknown config option:" + key)
 
         self.config["welcome_message"][key] = val
         self.save_config()
@@ -280,7 +274,7 @@ class WelcomeMessage(Plugin):
                     sender.send_message(
                         self.print_head
                         + "§gWelcome message option set:\n"
-                        + args[0]
+                        + "§c| §3" + args[0]
                         + ": §r"
                         + args[1]
                     )
