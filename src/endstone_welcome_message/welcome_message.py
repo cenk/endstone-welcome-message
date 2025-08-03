@@ -274,7 +274,8 @@ class WelcomeMessage(Plugin):
                     sender.send_message(
                         self.print_head
                         + "§gWelcome message option set:\n"
-                        + "§c| §3" + args[0]
+                        + "§c| §3"
+                        + args[0]
                         + ": §r"
                         + args[1]
                     )

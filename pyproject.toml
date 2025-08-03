@@ -10,12 +10,14 @@ authors = [
 ]
 description = "A simple plugin for Endstone that sends a welcome message to players when they join. The message can be shown in chat, tip, popup, toast, title, or form format."
 readme = "README.md"
-license = "MIT"
-license-files = ["LICENSE"]
-keywords = ["minecraft", "endstone", "plugin", "welcome", "message", "chat", "tip", "toast", "title", "popup", "form"]
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+keywords = ["minecraft", "bedrock", "endstone", "plugin", "welcome", "message", "chat", "tip", "toast", "title", "popup", "form"]
 
 [project.urls]
 Homepage = "https://github.com/cenk/endstone-welcome-message"
+Documentation = "https://github.com/cenk/endstone-welcome-message/blob/main/README.md"
+Issues = "https://github.com/cenk/endstone-welcome-message/issues"
 
 [project.entry-points."endstone"]
 welcome-message = "endstone_welcome_message:WelcomeMessage"
