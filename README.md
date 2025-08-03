@@ -43,6 +43,7 @@ Used to update specific configuration options for the welcome message.
     - Sets the message body.
     - Supports placeholders and Minecraft color codes.
     - Use `\n` for new lines.
+    - Note that the Toast message type does not support new lines.
     - Example: `/wmset body Hi {player_name}\nWelcome to our server`
 - `/wmset button <value>`
     - Sets the form button text.
