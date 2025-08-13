@@ -24,5 +24,6 @@ welcome-message = "endstone_welcome_message:WelcomeMessage"
 
 [tool.hatch.build]
 exclude = [
-  "/.*"
+  "/.*",
+  "/images/"
 ]
